@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+  <button onclick="create()">Create Post</button>
+  <button onclick="register()"> Register User</button>
+  <button onclick="login()"> Login User</button>
+  <button onclick="logout()"> Logout User</button>
+
+  <script>
+
+    function getCookieValue(name) {
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      if (match) return decodeURIComponent(match[2]);
+      return null;
+    }
+
+    async function register() {
+      // 1️⃣ Get CSRF cookie (204 is fine)
+      await fetch("http://socialmedia.test/sanctum/csrf-cookie", { credentials: "include" });
+
+      // 2️⃣ Send register POST
+      fetch("http://socialmedia.test/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "X-XSRF-TOKEN": getCookieValue("XSRF-TOKEN")
+        },
+        credentials: "include",
+        body: JSON.stringify({ email: "test21@gmail.com", password: "strongtest" })
+      })
+        .then(res => res.json())
+        .then(data => console.log(data))
+        .catch(err => console.error(err));
+    }
+
+    async function login() {
+      // 1️⃣ Get CSRF cookie (204 is fine)
+      await fetch("http://socialmedia.test/sanctum/csrf-cookie", { credentials: "include" });
+
+      // 2️⃣ Send register POST
+      fetch("http://socialmedia.test/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "X-XSRF-TOKEN": getCookieValue("XSRF-TOKEN")
+        },
+        credentials: "include",
+        body: JSON.stringify({ email: "test21@gmail.com", password: "strongtest" })
+      })
+        .then(res => res.json())
+        .then(data => console.log(data))
+        .catch(err => console.error(err));
+    }
+
+    async function logout() {
+      // 1️⃣ Get CSRF cookie (204 is fine)
+      await fetch("http://socialmedia.test/sanctum/csrf-cookie", { credentials: "include" });
+
+      // 2️⃣ Send register POST
+      fetch("http://socialmedia.test/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "X-XSRF-TOKEN": getCookieValue("XSRF-TOKEN")
+        },
+        credentials: "include"
+      })
+        .then(res => res.json())
+        .then(data => console.log(data))
+        .catch(err => console.error(err));
+    }
+
+
+
+    async function create() {
+
+      await fetch("http://socialmedia.test/sanctum/csrf-cookie", {
+        credentials: "include"
+      });
+
+      fetch("http://socialmedia.test/api/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "X-XSRF-TOKEN": getCookieValue("XSRF-TOKEN")
+
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          caption: "testing"
+        })
+      })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error(error));
+    }
+
+
+
+  </script>
+
+</body>
+
+</html>
